@@ -45,12 +45,17 @@ public class HaircutImageServiceImpl implements IHaircutImageService {
 			throws IOException {
 		Haircut haircut = haircutRepository.findById(haircutId)
 				.orElseThrow(() -> new NotFoundException("Haircut not found: " + haircutId));
-
+		
+		validationDuplicateImage(haircutId, file.getOriginalFilename());
 		if (active) {
 			boolean existsActive = repository.existsByHaircutIdAndActiveTrue(haircutId);
 			if (existsActive) {
 				throw new DefaultActiveImageException("Já existe uma imagem ativa para este corte.");
 			}
+		}
+		
+		if(haircut.getImages().isEmpty()) {
+			active = true;
 		}
 
 		HaircutImage entity = HaircutImage.builder().haircut(haircut).filename(file.getOriginalFilename())
@@ -62,6 +67,7 @@ public class HaircutImageServiceImpl implements IHaircutImageService {
 	}
 
 	@Override
+	@Cacheable(value = "haircuts", key = "#id")
 	public HaircutImageDTO getImageById(UUID id) {
 		HaircutImage entity = repository.findById(id)
 				.orElseThrow(() -> new NotFoundException("Imagem não encontrada: " + id));
@@ -71,8 +77,13 @@ public class HaircutImageServiceImpl implements IHaircutImageService {
 		return dto;
 	}
 	
-
-	@Cacheable(value = "haircuts", key = "#id")
+	private void validationDuplicateImage(UUID haircutId, String fileName) {
+		boolean existesByName = repository.existsByHaircutIdAndFilename(haircutId, fileName);
+		if(existesByName) {
+			throw new DefaultActiveImageException("Essa imagem ja existe.");
+		}
+	}
+	
 	private HaircutImage findById(UUID id) {
 		return repository.findById(id).orElseThrow(() -> new NotFoundException(id.toString()));
 	}
@@ -94,6 +105,19 @@ public class HaircutImageServiceImpl implements IHaircutImageService {
 		if (activeCountExcludingCurrent > 1) {
 			throw new DefaultActiveImageException("Não pode haver mais de uma imagem ativa no corte.");
 		}
+	}
+
+	@Override
+	@Transactional
+	public void activeImage(UUID id) {
+	    HaircutImage entity = findById(id);
+	    UUID haircutId = entity.getHaircut().getId();
+
+	    // Busca todas as imagens do corte
+	    List<HaircutImage> images = repository.findByHaircutId(haircutId);
+
+	    // Atualiza a propriedade 'active' de forma limpa
+	    images.forEach(img -> img.setActive(img.getId().equals(id)));
 	}
 
 }

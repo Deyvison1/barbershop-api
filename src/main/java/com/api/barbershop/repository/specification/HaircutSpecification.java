@@ -1,6 +1,8 @@
 package com.api.barbershop.repository.specification;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +25,8 @@ public class HaircutSpecification {
 				addPredicateIfPresent(predicates, hasName(filter.getName()), root, cb);
 				addPredicateIfPresent(predicates, hasDescription(filter.getDescription()), root, cb);
 				addPredicateIfPresent(predicates, hasPrice(filter.getPrice()), root, cb);
+				addPredicateIfPresent(predicates, hasTime(filter.getTime()), root, cb);
+				addPredicateIfPresent(predicates, hasCreatedDate(filter.getCreatedDate()), root, cb);
 			}
 
 			query.distinct(true);
@@ -52,5 +56,21 @@ public class HaircutSpecification {
 
 	public static Specification<Haircut> hasPrice(BigDecimal price) {
 		return (root, _, cb) -> (price == null) ? null : cb.equal(root.get("price"), price);
+	}
+
+	public static Specification<Haircut> hasTime(Integer time) {
+		return (root, _, cb) -> (time == null) ? null : cb.equal(root.get("time"), time);
+	}
+
+	public static Specification<Haircut> hasCreatedDate(LocalDateTime createdDate) {
+		return (root, _, cb) -> {
+			if (createdDate == null)
+				return null;
+
+			LocalDateTime startOfDay = createdDate.toLocalDate().atStartOfDay(); // 00:00:00
+			LocalDateTime endOfDay = createdDate.toLocalDate().atTime(LocalTime.MAX); // 23:59:59.999999999
+
+			return cb.between(root.get("createdDate"), startOfDay, endOfDay);
+		};
 	}
 }

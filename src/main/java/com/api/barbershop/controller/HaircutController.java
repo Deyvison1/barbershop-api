@@ -3,6 +3,7 @@ package com.api.barbershop.controller;
 import com.api.barbershop.dto.HaircutDTO;
 import com.api.barbershop.dto.HaircutFilterDTO;
 import com.api.barbershop.dto.constants.HaircutMessages;
+import com.api.barbershop.dto.haircut.HaircutCreateDTO;
 import com.api.barbershop.service.IHaircutService;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -49,7 +50,7 @@ public class HaircutController {
 	@PostMapping
 	@PreAuthorize(HaircutMessages.ADMIN_AUTHORITY)
 	@ApiResponse(responseCode = "201", description = HaircutMessages.CREATED)
-	public ResponseEntity<HaircutDTO> add(@Valid @RequestBody final HaircutDTO dto) {
+	public ResponseEntity<HaircutDTO> add(@Valid @RequestBody final HaircutCreateDTO dto) {
 		HaircutDTO response = service.add(dto);
 		URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(response.getId())
 				.toUri();

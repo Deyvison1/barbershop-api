@@ -19,4 +19,5 @@ public final class HaircutImageMessages {
 	public static final String DELETED = "Imagem do Corte excluído com sucesso.";
 	public static final String UPLOAD = "Upload de Imagem realizado com sucesso.";
 	public static final String DOWNLOAD = "Downoad de Imagem realizado com sucesso.";
+	public static final String ACTIVE_IMAGE = "Imagem ativada com sucesso.";
 }

@@ -35,7 +35,7 @@ public class HaircutImage extends BaseEntity {
 	@Lob
 	@Basic(fetch = FetchType.LAZY)
 	private byte[] data;
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "haircut_id", nullable = false)
 	private Haircut haircut;
 

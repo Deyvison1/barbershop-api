@@ -13,4 +13,5 @@ public interface IHaircutImageRepository extends JpaRepository<HaircutImage, UUI
 	List<HaircutImage> findByHaircutId(UUID id);
 
 	boolean existsByHaircutIdAndActiveTrue(UUID haircutId);
+	boolean existsByHaircutIdAndFilename(UUID haircutId, String filename);
 }

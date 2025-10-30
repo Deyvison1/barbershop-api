@@ -35,6 +35,7 @@ public class Haircut extends BaseEntity {
 	@Size(min = 3, max = 255, message = "Tamanho da descrição deve ter entre 3 a 255 caracteres.")
 	private String description;
 	private BigDecimal price;
+	private Integer time;
 	@OneToMany(mappedBy = "haircut", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<HaircutImage> images;
 }

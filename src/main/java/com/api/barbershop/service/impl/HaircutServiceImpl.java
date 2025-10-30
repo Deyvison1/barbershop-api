@@ -2,6 +2,7 @@ package com.api.barbershop.service.impl;
 
 import com.api.barbershop.dto.HaircutDTO;
 import com.api.barbershop.dto.HaircutFilterDTO;
+import com.api.barbershop.dto.haircut.HaircutCreateDTO;
 import com.api.barbershop.exception.NotChangedException;
 import com.api.barbershop.exception.NotFoundException;
 import com.api.barbershop.mapper.IHaircutMapper;
@@ -16,7 +17,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -37,17 +40,22 @@ public class HaircutServiceImpl implements IHaircutService {
 	public Page<HaircutDTO> findAll(Pageable pageable, HaircutFilterDTO filter) {
 		Specification<Haircut> spec = HaircutSpecification.filterBy(filter);
 
-		Page<Haircut> haircuts = repository.findAll(spec, pageable);
+		Pageable pageableRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+				Sort.by(Sort.Direction.DESC, "createdDate"));
+
+		Page<Haircut> haircuts = repository.findAll(spec, pageableRequest);
+
 		haircuts.forEach(
 				h -> h.setImages(h.getImages().stream().filter(HaircutImage::getActive).collect(Collectors.toList())));
+
 		return haircuts.map(mapper::toDto);
 	}
 
 	@Override
 	@Transactional
 	@CacheEvict(value = "haircuts", allEntries = true)
-	public HaircutDTO add(HaircutDTO dto) {
-		Haircut entity = mapper.toEntity(dto);
+	public HaircutDTO add(HaircutCreateDTO dto) {
+		Haircut entity = mapper.toEntityCreate(dto);
 		return mapper.toDto(repository.save(entity));
 	}
 
@@ -70,9 +78,10 @@ public class HaircutServiceImpl implements IHaircutService {
 
 	@Override
 	@Transactional
-	@Cacheable(value = "haircuts", key = "#id")
 	public HaircutDTO findByIdDTO(UUID id) {
 		Haircut entity = findById(id);
+		if (entity.getImages().isEmpty()) {
+		}
 		return mapper.toDto(entity);
 	}
 
@@ -84,14 +93,16 @@ public class HaircutServiceImpl implements IHaircutService {
 				entity.setDescription(dto.getDescription());
 			if (Objects.nonNull(dto.getPrice()))
 				entity.setPrice(dto.getPrice());
+			if (Objects.nonNull(dto.getTime()))
+				entity.setTime(dto.getTime());
 		}
 	}
 
 	private boolean isChange(Haircut entity, HaircutDTO dto) {
 		if (Objects.nonNull(entity) && Objects.nonNull(dto)) {
 
-			return !dto.getName().equals(entity.getName()) || !dto.getDescription().equals(entity.getDescription())
-					|| !dto.getPrice().equals(entity.getPrice());
+			return dto.getName() != entity.getName() || dto.getDescription() != entity.getDescription()
+					|| dto.getPrice() != entity.getPrice() || dto.getTime() != entity.getTime();
 		}
 		throw new NotChangedException();
 	}

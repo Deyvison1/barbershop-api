@@ -7,9 +7,10 @@ import org.springframework.data.domain.Pageable;
 
 import com.api.barbershop.dto.HaircutDTO;
 import com.api.barbershop.dto.HaircutFilterDTO;
+import com.api.barbershop.dto.haircut.HaircutCreateDTO;
 
 public interface IHaircutService {
-	HaircutDTO add(HaircutDTO dto);
+	HaircutDTO add(HaircutCreateDTO dto);
 
 	HaircutDTO update(UUID id, HaircutDTO dto);
 

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -61,6 +62,20 @@ public class HaircutImageController {
 	public ResponseEntity<Void> remove(@PathVariable UUID id) {
 		service.remove(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	/**
+	 * Ativa a imagem de um corte.
+	 * 
+	 * @param id UUID da imagem que deve ser ativada
+	 * @return 200 OK se sucesso
+	 */
+	@PutMapping("/{id}/activate")
+	@PreAuthorize(HaircutImageMessages.ADMIN_AUTHORITY)
+	@ApiResponse(responseCode = "204", description = HaircutImageMessages.ACTIVE_IMAGE)
+	public ResponseEntity<Void> activateImage(@PathVariable UUID id) {
+		service.activeImage(id);
+		return ResponseEntity.ok().build();
 	}
 
 }
