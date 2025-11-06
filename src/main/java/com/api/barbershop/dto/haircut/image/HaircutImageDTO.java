@@ -1,6 +1,7 @@
-package com.api.barbershop.dto;
+package com.api.barbershop.dto.haircut.image;
 
 import com.api.barbershop.dto.base.BaseDTO;
+import com.api.barbershop.dto.haircut.HaircutDTO;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

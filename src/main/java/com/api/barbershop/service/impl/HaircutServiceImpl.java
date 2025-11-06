@@ -1,8 +1,8 @@
 package com.api.barbershop.service.impl;
 
-import com.api.barbershop.dto.HaircutDTO;
-import com.api.barbershop.dto.HaircutFilterDTO;
 import com.api.barbershop.dto.haircut.HaircutCreateDTO;
+import com.api.barbershop.dto.haircut.HaircutDTO;
+import com.api.barbershop.dto.haircut.HaircutFilterDTO;
 import com.api.barbershop.exception.NotChangedException;
 import com.api.barbershop.exception.NotFoundException;
 import com.api.barbershop.mapper.IHaircutMapper;
@@ -77,6 +77,7 @@ public class HaircutServiceImpl implements IHaircutService {
 	}
 
 	@Override
+	@CacheEvict(value = "haircuts", key = "#id")
 	@Transactional
 	public HaircutDTO findByIdDTO(UUID id) {
 		Haircut entity = findById(id);

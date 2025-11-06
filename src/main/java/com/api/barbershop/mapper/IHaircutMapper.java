@@ -1,7 +1,7 @@
 package com.api.barbershop.mapper;
 
-import com.api.barbershop.dto.HaircutDTO;
 import com.api.barbershop.dto.haircut.HaircutCreateDTO;
+import com.api.barbershop.dto.haircut.HaircutDTO;
 import com.api.barbershop.mapper.base.IBaseMapper;
 import com.api.barbershop.model.Haircut;
 

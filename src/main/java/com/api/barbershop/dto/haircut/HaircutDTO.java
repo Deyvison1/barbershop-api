@@ -1,10 +1,12 @@
-package com.api.barbershop.dto;
+package com.api.barbershop.dto.haircut;
 
 import java.io.Serial;
 import java.math.BigDecimal;
 import java.util.List;
 
 import com.api.barbershop.dto.base.BaseDTO;
+import com.api.barbershop.dto.haircut.image.HaircutImageDTO;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

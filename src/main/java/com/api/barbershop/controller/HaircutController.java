@@ -1,9 +1,9 @@
 package com.api.barbershop.controller;
 
-import com.api.barbershop.dto.HaircutDTO;
-import com.api.barbershop.dto.HaircutFilterDTO;
 import com.api.barbershop.dto.constants.HaircutMessages;
 import com.api.barbershop.dto.haircut.HaircutCreateDTO;
+import com.api.barbershop.dto.haircut.HaircutDTO;
+import com.api.barbershop.dto.haircut.HaircutFilterDTO;
 import com.api.barbershop.service.IHaircutService;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

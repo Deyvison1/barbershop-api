@@ -15,9 +15,12 @@ public enum MenuEnum {
 
 	// --- MENUS PRINCIPAIS ---
 	CONTROL_HAIRCUT("Gerenciamento de cortes", null, "pi pi-file", Set.of("ADMIN")),
+	CONTROL_BARBER("Gerenciamento de barbeiros.", null, "pi pi-user-plus", Set.of("ADMIN")),
 	// --- SUBMENUS DE CURRICULUM ---
-	NEW_HAIRCUT("Novo Corte", "/haircut/form", "pi pi-user-plus", Set.of("ADMIN"), CONTROL_HAIRCUT),
-	FIND_ALL_HAIRCUT("Buscar Cortes", "/haircut/list", "pi pi-list", Set.of("ADMIN"), CONTROL_HAIRCUT);
+	NEW_HAIRCUT("Novo Corte", "/haircut/form", "pi pi-plus", Set.of("ADMIN"), CONTROL_HAIRCUT),
+	FIND_ALL_HAIRCUT("Buscar Cortes", "/haircut/list", "pi pi-list", Set.of("ADMIN"), CONTROL_HAIRCUT),
+	NEW_BARBER("Novo Barbeiro", "/barber/form", "pi pi-plus", Set.of("ADMIN"), CONTROL_BARBER),
+	FIND_ALL_BARBER("Buscar Barbeiros", "/barber/list", "pi pi-list", Set.of("ADMIN"), CONTROL_BARBER);
 
 	private final String label;
 	private final String routerLink;

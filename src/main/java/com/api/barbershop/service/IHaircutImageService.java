@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.api.barbershop.dto.HaircutImageDTO;
+import com.api.barbershop.dto.haircut.image.HaircutImageDTO;
 
 public interface IHaircutImageService {
 	void remove(UUID id);

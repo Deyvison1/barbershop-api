@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.api.barbershop.dto.HaircutImageDTO;
 import com.api.barbershop.dto.constants.HaircutImageMessages;
+import com.api.barbershop.dto.haircut.image.HaircutImageDTO;
 import com.api.barbershop.service.IHaircutImageService;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

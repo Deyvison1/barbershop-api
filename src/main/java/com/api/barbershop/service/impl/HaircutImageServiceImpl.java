@@ -9,7 +9,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.api.barbershop.dto.HaircutImageDTO;
+import com.api.barbershop.dto.haircut.image.HaircutImageDTO;
 import com.api.barbershop.exception.DefaultActiveImageException;
 import com.api.barbershop.exception.NotFoundException;
 import com.api.barbershop.mapper.IHaircutImageMapper;
@@ -39,13 +39,24 @@ public class HaircutImageServiceImpl implements IHaircutImageService {
 		repository.deleteById(id);
 	}
 
-	@Transactional
 	@Override
+	@Transactional
+	public void activeImage(UUID id) {
+		HaircutImage entity = findById(id);
+		UUID haircutId = entity.getHaircut().getId();
+
+		List<HaircutImage> images = repository.findByHaircutId(haircutId);
+
+		images.forEach(img -> img.setActive(img.getId().equals(id)));
+	}
+
+	@Override
+	@Transactional
 	public HaircutImageDTO uploadImageToDatabase(UUID haircutId, MultipartFile file, boolean active)
 			throws IOException {
 		Haircut haircut = haircutRepository.findById(haircutId)
 				.orElseThrow(() -> new NotFoundException("Haircut not found: " + haircutId));
-		
+
 		validationDuplicateImage(haircutId, file.getOriginalFilename());
 		if (active) {
 			boolean existsActive = repository.existsByHaircutIdAndActiveTrue(haircutId);
@@ -53,8 +64,8 @@ public class HaircutImageServiceImpl implements IHaircutImageService {
 				throw new DefaultActiveImageException("Já existe uma imagem ativa para este corte.");
 			}
 		}
-		
-		if(haircut.getImages().isEmpty()) {
+
+		if (haircut.getImages().isEmpty()) {
 			active = true;
 		}
 
@@ -76,14 +87,14 @@ public class HaircutImageServiceImpl implements IHaircutImageService {
 
 		return dto;
 	}
-	
+
 	private void validationDuplicateImage(UUID haircutId, String fileName) {
 		boolean existesByName = repository.existsByHaircutIdAndFilename(haircutId, fileName);
-		if(existesByName) {
+		if (existesByName) {
 			throw new DefaultActiveImageException("Essa imagem ja existe.");
 		}
 	}
-	
+
 	private HaircutImage findById(UUID id) {
 		return repository.findById(id).orElseThrow(() -> new NotFoundException(id.toString()));
 	}
@@ -105,19 +116,6 @@ public class HaircutImageServiceImpl implements IHaircutImageService {
 		if (activeCountExcludingCurrent > 1) {
 			throw new DefaultActiveImageException("Não pode haver mais de uma imagem ativa no corte.");
 		}
-	}
-
-	@Override
-	@Transactional
-	public void activeImage(UUID id) {
-	    HaircutImage entity = findById(id);
-	    UUID haircutId = entity.getHaircut().getId();
-
-	    // Busca todas as imagens do corte
-	    List<HaircutImage> images = repository.findByHaircutId(haircutId);
-
-	    // Atualiza a propriedade 'active' de forma limpa
-	    images.forEach(img -> img.setActive(img.getId().equals(id)));
 	}
 
 }

@@ -5,7 +5,7 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import com.api.barbershop.dto.HaircutImageDTO;
+import com.api.barbershop.dto.haircut.image.HaircutImageDTO;
 import com.api.barbershop.mapper.base.IBaseMapper;
 import com.api.barbershop.model.HaircutImage;
 

@@ -14,8 +14,13 @@ import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.dao.DataIntegrityViolationException;
+
+import java.sql.SQLException;
+
 @ControllerAdvice
 public class ResourceExceptionHandler {
+
 	@ExceptionHandler(NotFoundException.class)
 	public ResponseEntity<ErrorResponseDTO> handleNotFoundException(NotFoundException ex, HttpServletRequest request) {
 		return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request.getRequestURI());
@@ -42,6 +47,23 @@ public class ResourceExceptionHandler {
 		String combinedMessage = String.join("; ", messages);
 
 		return buildResponse(HttpStatus.BAD_REQUEST, combinedMessage, request.getRequestURI());
+	}
+
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	public ResponseEntity<ErrorResponseDTO> handleDataIntegrityViolation(DataIntegrityViolationException ex,
+			HttpServletRequest request) {
+		String message = "Violação de integridade de dados.";
+
+		Throwable rootCause = ex.getRootCause();
+		if (rootCause instanceof SQLException sqlEx) {
+			String msg = sqlEx.getMessage().toLowerCase();
+
+			if (msg.contains("unique") || msg.contains("duplicate")) {
+				message = "Já existe uma especialidade com este nome para este barbeiro.";
+			}
+		}
+
+		return buildResponse(HttpStatus.BAD_REQUEST, message, request.getRequestURI());
 	}
 
 	private ResponseEntity<ErrorResponseDTO> buildResponse(HttpStatus status, String message, String path) {

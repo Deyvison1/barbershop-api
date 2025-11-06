@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.domain.Specification;
 
-import com.api.barbershop.dto.HaircutFilterDTO;
+import com.api.barbershop.dto.haircut.HaircutFilterDTO;
 import com.api.barbershop.model.Haircut;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -67,8 +67,8 @@ public class HaircutSpecification {
 			if (createdDate == null)
 				return null;
 
-			LocalDateTime startOfDay = createdDate.toLocalDate().atStartOfDay(); // 00:00:00
-			LocalDateTime endOfDay = createdDate.toLocalDate().atTime(LocalTime.MAX); // 23:59:59.999999999
+			LocalDateTime startOfDay = createdDate.toLocalDate().atStartOfDay();
+			LocalDateTime endOfDay = createdDate.toLocalDate().atTime(LocalTime.MAX);
 
 			return cb.between(root.get("createdDate"), startOfDay, endOfDay);
 		};

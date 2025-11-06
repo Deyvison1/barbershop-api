@@ -1,0 +1,77 @@
+version: '3.9'
+
+services:
+  db:
+    image: postgres:15
+    container_name: db
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      retries: 5
+      timeout: 5s
+    networks:
+      - app-network
+
+  redis:
+    image: redis:7
+    container_name: redis
+    command: ["redis-server", "--save", "", "--appendonly", "no"]
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.4.0
+    container_name: keycloak
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://db:5432/keycloak
+      KC_DB_USERNAME: postgres
+      KC_DB_PASSWORD: 1234
+      KC_DB_SCHEMA: control_keycloak
+      KC_HOSTNAME: keycloak.local
+      KC_HTTP_ENABLED: false              # Desativa HTTP
+      KC_HTTPS_ENABLED: true              # Habilita HTTPS
+      KC_HTTPS_KEY_STORE_FILE: /opt/keycloak/keystore/keystore.p12
+      KC_HTTPS_KEY_STORE_PASSWORD: changeit
+      KC_HTTPS_KEY_STORE_TYPE: PKCS12
+      KC_CORS: "true"
+      KC_CORS_ALLOWED_ORIGINS: "https://localhost:4200"
+      KC_CORS_ALLOW_CREDENTIALS: "true"
+      KEYCLOAK_IMPORT: /opt/keycloak/data/import 
+      KC_CACHE: local
+      KC_CACHE_STACK: redis
+      KC_REDIS_HOST: redis
+      KC_REDIS_PORT: 6379
+    command:
+      - start
+      - --import-realm
+      - --hostname-strict=false
+    volumes:
+      - ./keycloak/data/import:/opt/keycloak/data/import
+      - ./keycloak/keystore:/opt/keycloak/keystore
+    ports:
+      - "8443:8443"
+    networks:
+      app-network:
+        aliases:
+          - keycloak
+
+volumes:
+  pgdata:
+
+networks:
+  app-network:
+    driver: bridge

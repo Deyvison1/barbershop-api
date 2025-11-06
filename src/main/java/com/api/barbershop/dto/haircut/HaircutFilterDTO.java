@@ -1,4 +1,4 @@
-package com.api.barbershop.dto;
+package com.api.barbershop.dto.haircut;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
